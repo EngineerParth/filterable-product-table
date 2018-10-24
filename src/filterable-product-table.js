@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import products from './Products.js';
 
 function ProductRow(props){
   return(
@@ -92,6 +91,8 @@ class ProductTable extends React.Component{
   }
 }
 
+// This class will be exported to the external js source files.
+// I have made this as an independent and reusable component
 class FilterableProductTable extends React.Component{
   constructor(props){
     super(props);
@@ -121,12 +122,12 @@ class FilterableProductTable extends React.Component{
   }
 }
 
-class App extends Component {
-  render() {
-    return (
-      <FilterableProductTable data={products}/>    
-    );
-  }
-}
+// class App extends Component {
+//   render() {
+//     return (
+//       <FilterableProductTable data={products}/>    
+//     );
+//   }
+// }
 
-export default App;
+export default FilterableProductTable;

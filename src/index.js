@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import FilterableProductTable from './filterable-product-table';
+import products from './Products.js';
 import registerServiceWorker from './registerServiceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<FilterableProductTable  data={products}/>, document.getElementById('root'));
 registerServiceWorker();
