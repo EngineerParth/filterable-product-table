@@ -4,13 +4,13 @@ import './App.css';
 
 function ProductRow(props){
   return(
-    <div>{props.name} {props.price}</div>
+    <tr><td>{props.name}</td> <td>{props.price}</td></tr>
   );
 }
 
 function ProductCategoryRow(props){
   return(
-    <div><strong>{props.category}</strong></div>
+    <th><td><strong>{props.category}</strong></td></th>
   )
 }
 
@@ -55,7 +55,9 @@ class ProductTable extends React.Component{
       return initialList;
     }
     initialList.forEach(function(item){
-      if(item.name.includes(filterText)){
+      // To accomodate case insensitive comparision, both the string and
+      // filter text are converted into lower case
+      if(item.name.toLowerCase().includes(filterText.toLowerCase())){
         filteredList.push(item);
       }
     });
@@ -71,15 +73,28 @@ class ProductTable extends React.Component{
     return onlyInStockList;
   }
 
-  render(){
-    let categories = ["Sporting Goods","Electronics"];// retrieve categories here
-    
+  render(){    
     const filterText = this.props.value;
     const onlyInStock = this.props.onlyInStock;
     
+    // First, the data of products matching the filtering criteria will be retrieved
     let products = this.filterProducts(filterText, onlyInStock);
+
+    // Then, the categories of those filtered products will be retrieved.
+    // By using this, the search result will show only categories whose 
+    // at least one product matches the filter criteria i.e. there will not
+    // be any category name with empty product list in the search 
+    //results
+    let categories = [];
+    products.forEach(function(currentProduct){
+      let currentCategory = currentProduct.category;
+      if(!categories.includes(currentCategory)){
+        categories.push(currentCategory);
+      }
+    });
     let rows = [];
 
+    // Then, the resultant rows will be displayed under their categories with following
     categories.forEach(function(currentCategory){
       rows.push(<ProductCategoryRow category={currentCategory}/>);
       products.forEach(function(currentProduct){
@@ -87,7 +102,13 @@ class ProductTable extends React.Component{
         rows.push(<ProductRow name={currentProduct.name} price={currentProduct.price}/>);
       });
     });
-    return rows;
+
+    return (
+      // Filtered products will be displayed as a table
+      <table border="0.5">
+        {rows}
+      </table>
+    );
   }
 }
 
