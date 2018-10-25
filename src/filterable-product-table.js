@@ -43,6 +43,8 @@ class ProductTable extends React.Component{
   constructor(props){
     super(props);
     this.filterProducts = this.filterProducts.bind(this);
+    this.retrieveCategories  = this.retrieveCategories.bind(this);
+    this.populateRows = this.populateRows.bind(this);
   }
   
   filterProducts(filterText, onlyInStock){
@@ -73,18 +75,7 @@ class ProductTable extends React.Component{
     return onlyInStockList;
   }
 
-  render(){    
-    const filterText = this.props.value;
-    const onlyInStock = this.props.onlyInStock;
-    
-    // First, the data of products matching the filtering criteria will be retrieved
-    let products = this.filterProducts(filterText, onlyInStock);
-
-    // Then, the categories of those filtered products will be retrieved.
-    // By using this, the search result will show only categories whose 
-    // at least one product matches the filter criteria i.e. there will not
-    // be any category name with empty product list in the search 
-    //results
+  retrieveCategories(products){
     let categories = [];
     products.forEach(function(currentProduct){
       let currentCategory = currentProduct.category;
@@ -92,9 +83,11 @@ class ProductTable extends React.Component{
         categories.push(currentCategory);
       }
     });
-    let rows = [];
+    return categories;
+  }
 
-    // Then, the resultant rows will be displayed under their categories with following
+  populateRows(categories, products){
+    let rows = [];
     categories.forEach(function(currentCategory){
       rows.push(<ProductCategoryRow category={currentCategory}/>);
       products.forEach(function(currentProduct){
@@ -102,13 +95,34 @@ class ProductTable extends React.Component{
         rows.push(<ProductRow name={currentProduct.name} price={currentProduct.price}/>);
       });
     });
+    return rows;
+  }
 
-    return (
-      // Filtered products will be displayed as a table
-      <table border="0.5">
-        {rows}
-      </table>
-    );
+  render(){    
+    const filterText = this.props.value;
+    const onlyInStock = this.props.onlyInStock;
+    // First, the data of products matching the filtering criteria will be retrieved
+    let products = this.filterProducts(filterText, onlyInStock);
+    if(products.length === 0){
+      return(
+        <div><h5>---<i>Not Found</i>---</h5></div>
+      );
+    } else{
+        // Then, the categories of those filtered products will be retrieved.
+        // By using this, the search result will show only categories whose 
+        // at least one product matches the filter criteria i.e. there will not
+        // be any category name with empty product list in the search 
+        //results
+        let categories = this.retrieveCategories(products);
+        // Then, the resultant rows will be displayed under their categories with following
+        let rows = this.populateRows(categories, products); 
+        return (
+          // Filtered products will be displayed as a table
+          <table border="0.5">
+            {rows}
+          </table>
+        );
+        }
   }
 }
 
